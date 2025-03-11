@@ -12,6 +12,13 @@ export class Item {
   }
 }
 
+const maxQuality = 50
+const minQuality = 0
+
+const degradationStrategies = {
+  [GoodsTypes.agedBrie]: (i: Item) => i.quality < maxQuality ? i.quality + (i.sellIn > 0 ? 1 : 2) : i.quality,
+}
+
 export class GildedRose {
   items: Array<Item>;
 
@@ -22,11 +29,16 @@ export class GildedRose {
   updateQuality() {
     for (let i = 0; i < this.items.length; i++) {      
 
-      switch(this.items[i].name) {
+      const name = this.items[i].name
+      switch(name) {
         case GoodsTypes.sulfuras:
           break;
+        case GoodsTypes.agedBrie:
+          this.items[i].quality = degradationStrategies[name](this.items[i])
+          this.items[i].sellIn = this.items[i].sellIn - 1
+          break;
         default:
-          if (this.items[i].name != GoodsTypes.agedBrie && this.items[i].name != GoodsTypes.backstagePass) {
+          if (this.items[i].name != GoodsTypes.backstagePass) {
             if (this.items[i].quality > 0) {
               this.items[i].quality = this.items[i].quality - 1 // default goods
             }
@@ -52,7 +64,6 @@ export class GildedRose {
           this.items[i].sellIn = this.items[i].sellIn - 1;
 
           if (this.items[i].sellIn < 0) {
-            if (this.items[i].name != GoodsTypes.agedBrie) {
               if (this.items[i].name != GoodsTypes.backstagePass ) {
                 if (this.items[i].quality > 0) {
                   this.items[i].quality = this.items[i].quality - 1 // Once the sell by date has passed, Quality degrades twice as fast
@@ -60,11 +71,6 @@ export class GildedRose {
               } else {
                 this.items[i].quality = this.items[i].quality - this.items[i].quality
               }
-            } else { // agedBrie
-              if (this.items[i].quality < 50) {
-                this.items[i].quality = this.items[i].quality + 1
-              }
-            }
           }
       }
     }

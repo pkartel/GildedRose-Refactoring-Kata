@@ -20,49 +20,52 @@ export class GildedRose {
   }
 
   updateQuality() {
-    for (let i = 0; i < this.items.length; i++) {
-      if (this.items[i].name != GoodsTypes.agedBrie && this.items[i].name != GoodsTypes.backstagePass) {
-        if (this.items[i].quality > 0) {
-          if (this.items[i].name != GoodsTypes.sulfuras) {
-            this.items[i].quality = this.items[i].quality - 1
-          }
-        }
-      } else {
-        if (this.items[i].quality < 50) {
-          this.items[i].quality = this.items[i].quality + 1
-          if (this.items[i].name == GoodsTypes.backstagePass) {
-            if (this.items[i].sellIn < 11) {
-              if (this.items[i].quality < 50) {
-                this.items[i].quality = this.items[i].quality + 1
-              }
-            }
-            if (this.items[i].sellIn < 6) {
-              if (this.items[i].quality < 50) {
-                this.items[i].quality = this.items[i].quality + 1
-              }
-            }
-          }
-        }
-      }
-      if (this.items[i].name != GoodsTypes.sulfuras) {
-        this.items[i].sellIn = this.items[i].sellIn - 1;
-      }
-      if (this.items[i].sellIn < 0) {
-        if (this.items[i].name != GoodsTypes.agedBrie) {
-          if (this.items[i].name != GoodsTypes.backstagePass) {
+    for (let i = 0; i < this.items.length; i++) {      
+
+      switch(this.items[i].name) {
+        case GoodsTypes.sulfuras:
+          break;
+        default:
+          if (this.items[i].name != GoodsTypes.agedBrie && this.items[i].name != GoodsTypes.backstagePass) {
             if (this.items[i].quality > 0) {
-              if (this.items[i].name != GoodsTypes.sulfuras) {
-                this.items[i].quality = this.items[i].quality - 1
+              this.items[i].quality = this.items[i].quality - 1 // default goods
+            }
+          } else { // agedBrie, backstage or sulfuras
+            if (this.items[i].quality < 50) { // agedBrie, backstage
+              this.items[i].quality = this.items[i].quality + 1
+             
+              if (this.items[i].name == GoodsTypes.backstagePass) {
+                if (this.items[i].sellIn < 11) {
+                  if (this.items[i].quality < 50) {
+                    this.items[i].quality = this.items[i].quality + 1
+                  }
+                }
+                if (this.items[i].sellIn < 6) {
+                  if (this.items[i].quality < 50) {
+                    this.items[i].quality = this.items[i].quality + 1
+                  }
+                }
               }
             }
-          } else {
-            this.items[i].quality = this.items[i].quality - this.items[i].quality
           }
-        } else {
-          if (this.items[i].quality < 50) {
-            this.items[i].quality = this.items[i].quality + 1
+
+          this.items[i].sellIn = this.items[i].sellIn - 1;
+
+          if (this.items[i].sellIn < 0) {
+            if (this.items[i].name != GoodsTypes.agedBrie) {
+              if (this.items[i].name != GoodsTypes.backstagePass ) {
+                if (this.items[i].quality > 0) {
+                  this.items[i].quality = this.items[i].quality - 1 // Once the sell by date has passed, Quality degrades twice as fast
+                }
+              } else {
+                this.items[i].quality = this.items[i].quality - this.items[i].quality
+              }
+            } else { // agedBrie
+              if (this.items[i].quality < 50) {
+                this.items[i].quality = this.items[i].quality + 1
+              }
+            }
           }
-        }
       }
     }
 

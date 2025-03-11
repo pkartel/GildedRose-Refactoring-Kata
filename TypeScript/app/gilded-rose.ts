@@ -27,6 +27,12 @@ const degradationStrategies = {
     
     return quality + dif <= maxQuality ? quality + dif : maxQuality
   },
+  default: (i: Item) => {
+    const { sellIn, quality } = i
+    const diff = sellIn <= 0 ? 2 : 1
+
+    return quality - diff >= minQuality ? quality - diff : minQuality
+  }
 }
 
 export class GildedRose {
@@ -36,34 +42,19 @@ export class GildedRose {
     this.items = items;
   }
 
-  updateQuality() {
-    for (let i = 0; i < this.items.length; i++) {      
-
-      const name = this.items[i].name
-      switch(name) {
-        case GoodsTypes.sulfuras:
-          break;
-        case GoodsTypes.agedBrie:
-          this.items[i].quality = degradationStrategies[name](this.items[i])
-          this.items[i].sellIn = this.items[i].sellIn - 1
-          break;
-        case GoodsTypes.backstagePass:
-          this.items[i].quality = degradationStrategies[name](this.items[i])
-          this.items[i].sellIn = this.items[i].sellIn - 1
-          break;
-        default:
-          if (this.items[i].quality > 0) {
-            this.items[i].quality = this.items[i].quality - 1 // default goods
-          }
-          
-          if (this.items[i].sellIn <= 0 && this.items[i].quality > 0) {
-            this.items[i].quality = this.items[i].quality - 1 // Once the sell by date has passed, Quality degrades twice as fast
-          }
-
-          this.items[i].sellIn = this.items[i].sellIn - 1;
-      }
+  updateQuality = () => this.items.map(i => {
+    switch(i.name) {
+      case GoodsTypes.sulfuras:
+        return i
+      case GoodsTypes.agedBrie:
+      case GoodsTypes.backstagePass:
+        i.quality = degradationStrategies[i.name](i),
+        i.sellIn -= 1
+        return i
+      default:
+        i.quality =  degradationStrategies.default(i),
+        i.sellIn -= 1
+        return i
     }
-
-    return this.items;
-  }
+  })
 }

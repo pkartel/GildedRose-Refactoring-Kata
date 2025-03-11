@@ -27,6 +27,12 @@ const degradationStrategies = {
     
     return quality + dif <= maxQuality ? quality + dif : maxQuality
   },
+  [GoodsTypes.conjured]: (i: Item) => {
+    const { sellIn, quality } = i
+    const diff = sellIn <= 0 ? 4 : 2
+
+    return quality - diff >= minQuality ? quality - diff : minQuality
+  },
   default: (i: Item) => {
     const { sellIn, quality } = i
     const diff = sellIn <= 0 ? 2 : 1
@@ -48,6 +54,7 @@ export class GildedRose {
         return i
       case GoodsTypes.agedBrie:
       case GoodsTypes.backstagePass:
+      case GoodsTypes.conjured:
         i.quality = degradationStrategies[i.name](i),
         i.sellIn -= 1
         return i

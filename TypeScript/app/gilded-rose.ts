@@ -1,4 +1,5 @@
-import { GoodsTypes } from "./types";
+import { GoodsTypes } from './types';
+import degradationStrategies from './goods-degradation-strategies';
 
 export class Item {
   name: string;
@@ -12,35 +13,6 @@ export class Item {
   }
 }
 
-const maxQuality = 50
-const minQuality = 0
-
-const degradationStrategies = {
-  [GoodsTypes.agedBrie]: (i: Item) => i.quality < maxQuality ? i.quality + (i.sellIn > 0 ? 1 : 2) : i.quality,
-  [GoodsTypes.backstagePass]: (i: Item) => {
-    const { sellIn, quality } = i
-
-    const dif = sellIn <= 0 ? -quality :
-      sellIn < 11
-        ? (sellIn < 6 ? 3 : 2)
-        : 1
-    
-    return quality + dif <= maxQuality ? quality + dif : maxQuality
-  },
-  [GoodsTypes.conjured]: (i: Item) => {
-    const { sellIn, quality } = i
-    const diff = sellIn <= 0 ? 4 : 2
-
-    return quality - diff >= minQuality ? quality - diff : minQuality
-  },
-  default: (i: Item) => {
-    const { sellIn, quality } = i
-    const diff = sellIn <= 0 ? 2 : 1
-
-    return quality - diff >= minQuality ? quality - diff : minQuality
-  }
-}
-
 export class GildedRose {
   items: Array<Item>;
 
@@ -51,17 +23,18 @@ export class GildedRose {
   updateQuality = () => this.items.map(i => {
     switch(i.name) {
       case GoodsTypes.sulfuras:
-        return i
+        i.quality = degradationStrategies[i.name].getQuality(i);
+        return i;
       case GoodsTypes.agedBrie:
       case GoodsTypes.backstagePass:
       case GoodsTypes.conjured:
-        i.quality = degradationStrategies[i.name](i),
-        i.sellIn -= 1
-        return i
+        i.quality = degradationStrategies[i.name].getQuality(i);
+        i.sellIn -= 1;
+        return i;
       default:
-        i.quality =  degradationStrategies.default(i),
-        i.sellIn -= 1
-        return i
+        i.quality = degradationStrategies[GoodsTypes.default].getQuality(i);
+        i.sellIn -= 1;
+        return i;
     }
   })
 }

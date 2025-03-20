@@ -20,21 +20,9 @@ export class GildedRose {
     this.items = items;
   }
 
-  updateQuality = () => this.items.map(i => {
-    switch(i.name) {
-      case GoodsTypes.sulfuras:
-        i.quality = degradationStrategies[i.name].getQuality(i);
-        return i;
-      case GoodsTypes.agedBrie:
-      case GoodsTypes.backstagePass:
-      case GoodsTypes.conjured:
-        i.quality = degradationStrategies[i.name].getQuality(i);
-        i.sellIn -= 1;
-        return i;
-      default:
-        i.quality = degradationStrategies[GoodsTypes.default].getQuality(i);
-        i.sellIn -= 1;
-        return i;
-    }
+  updateQuality = () => 
+    this.items.forEach(i => {
+      const strategy = degradationStrategies[i.name] || degradationStrategies[GoodsTypes.default];
+      strategy.updateItem(i);
   })
 }

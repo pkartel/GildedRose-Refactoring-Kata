@@ -1,14 +1,19 @@
 import { Item } from "@/gilded-rose";
-import { IUpdateQualityStrategy } from "@/types";
+import { IQualityStrategy } from "@/types";
 
-export abstract class BaseStrategy implements IUpdateQualityStrategy<Item> {
+export abstract class BaseStrategy implements IQualityStrategy<Item> {
     protected minQuality = 0;
     protected maxQuality = 50;
   
-    abstract calculateNewQuality(i: Item): number;
-  
-    getQuality(i: Item): number {
-      const newQuality = this.calculateNewQuality(i);
-      return Math.max(this.minQuality, Math.min(this.maxQuality, newQuality));
+    protected abstract computeQuality(i: Item): number;
+    protected updateSellIn(i: Item) {
+        i.sellIn -= 1;
+    }
+
+    updateItem(i) {
+        const quality = this.computeQuality(i);
+        i.quality = Math.max(this.minQuality, Math.min(this.maxQuality, quality));
+
+        this.updateSellIn(i)
     }
   }

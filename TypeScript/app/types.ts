@@ -6,6 +6,6 @@ export enum GoodsTypes {
     default = 'Default',
 }
 
-export interface IUpdateQualityStrategy<T> {
-    getQuality: (i: T) => number;
+export interface IQualityStrategy<T> {
+    updateItem: (i: T) => void;
 }

@@ -1,17 +1,15 @@
 import { Item } from '@/gilded-rose';
-import { IDegradationStrategy } from '@/types';
+import { BaseStrategy } from './base-strategy';
+export class DefaultStrategy extends BaseStrategy {
+  calculateNewQuality(i: Item): number {
+    const degradationSpeed = i.sellIn <= 0 ? 2 : 1;
 
-export class DegradationStrategy implements IDegradationStrategy<Item> {
-  minQuality = 0;
-
-  getQuality(i: Item, diff?: number) {
-    const { sellIn, quality } = i;
-    diff = typeof diff === 'number' ? diff : (sellIn <= 0 ? 2 : 1);
-
-    return quality - diff >= this.minQuality ? quality - diff : this.minQuality;
+    return i.quality - degradationSpeed;
   }
 }
-
-export class ConjuredStrategy extends DegradationStrategy {
-  getQuality = (i: Item) => super.getQuality(i, i.sellIn <= 0 ? 4 : 2);
+export class ConjuredStrategy extends BaseStrategy {
+  calculateNewQuality(i: Item): number {
+    const degradationSpeed = i.sellIn <= 0 ? 4 : 2
+    return i.quality - degradationSpeed;
+  }
 }

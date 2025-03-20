@@ -1,29 +1,32 @@
 import { Item } from '@/gilded-rose';
-import { IAppreciationStrategy } from '@/types';
+import { BaseStrategy } from './base-strategy';
 
-export class AppreciationStrategy implements IAppreciationStrategy<Item> {
-  maxQuality = 50;
+export class AgedBrieStrategy extends BaseStrategy {
+  calculateNewQuality(i: Item): number {
+    const appreciationSpeed = i.sellIn <= 0 ? 2 : 1;
 
-  getQuality(i: Item, diff?: number) {
-    const { sellIn, quality } = i;
-    diff = typeof diff === 'number' ? diff : sellIn > 0 ? 1 : 2;
-
-    return quality + diff <= this.maxQuality ? quality + diff : this.maxQuality;
+    return i.quality + appreciationSpeed
   }
 }
 
-export class BackstagePassStrategy extends AppreciationStrategy {
-  getQuality(i: Item) {
+export class BackstagePassStrategy extends BaseStrategy {
+  calculateNewQuality(i: Item): number {
     const { sellIn, quality } = i;
-    const diff = sellIn <= 0 ? -quality :
-      sellIn < 11
-        ? (sellIn < 6 ? 3 : 2)
-        : 1;
+
+    const appreciationSpeed = sellIn <= 0 ? -quality
+      : sellIn < 6 ? 3
+      : sellIn < 11 ? 2
+      : 1
     
-    return super.getQuality(i, diff);
+    return i.quality + appreciationSpeed
   }
 }
 
-export class SulfurasStrategy extends AppreciationStrategy {
-  getQuality = (i: Item) => i.quality;
+export class SulfurasStrategy extends BaseStrategy {
+  maxQuality = 80;
+  minQuality = 80;
+
+  calculateNewQuality(i: Item): number {
+    return i.quality
+  }
 }

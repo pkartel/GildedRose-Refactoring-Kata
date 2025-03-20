@@ -1,11 +1,11 @@
 import { GoodsTypes } from '@/types';
-import { AppreciationStrategy, BackstagePassStrategy, SulfurasStrategy } from './appreciation-strategies';
-import { ConjuredStrategy, DegradationStrategy } from './degradation-strategies';
+import { AgedBrieStrategy, BackstagePassStrategy, SulfurasStrategy } from './appreciation-strategies';
+import { ConjuredStrategy, DefaultStrategy } from './degradation-strategies';
 
 export default {
     [GoodsTypes.sulfuras]: new SulfurasStrategy(),
-    [GoodsTypes.agedBrie]: new AppreciationStrategy(),
+    [GoodsTypes.agedBrie]: new AgedBrieStrategy(),
     [GoodsTypes.backstagePass]: new BackstagePassStrategy(),
     [GoodsTypes.conjured]: new ConjuredStrategy(),
-    [GoodsTypes.default]: new DegradationStrategy()
+    [GoodsTypes.default]: new DefaultStrategy()
 }

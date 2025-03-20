@@ -6,12 +6,6 @@ export enum GoodsTypes {
     default = 'Default',
 }
 
-export interface IDegradationStrategy<T> {
-    getQuality: (i: T, diff?: number) => number;
-    minQuality: number;
+export interface IUpdateQualityStrategy<T> {
+    getQuality: (i: T) => number;
 }
-export interface IAppreciationStrategy<T> {
-    getQuality: (i: T, diff?: number) => number;
-    maxQuality: number;
-}
-

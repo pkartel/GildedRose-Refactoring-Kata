@@ -1,5 +1,7 @@
 import { GoodsTypes } from './types';
-import degradationStrategies from './goods-degradation-strategies';
+import { AgedBrieStrategy, BackstagePassStrategy, SulfurasStrategy } from './goods-degradation-strategies/appreciation-strategies';
+import { ConjuredStrategy, DefaultStrategy } from './goods-degradation-strategies/degradation-strategies';
+import { BaseStrategy } from './goods-degradation-strategies/base-strategy';
 
 export class Item {
   name: string;
@@ -15,6 +17,13 @@ export class Item {
 
 export class GildedRose {
   items: Array<Item>;
+  private static strategies: Record<GoodsTypes, BaseStrategy> = {
+    [GoodsTypes.sulfuras]: new SulfurasStrategy(),
+    [GoodsTypes.agedBrie]: new AgedBrieStrategy(),
+    [GoodsTypes.backstagePass]: new BackstagePassStrategy(),
+    [GoodsTypes.conjured]: new ConjuredStrategy(),
+    [GoodsTypes.default]: new DefaultStrategy()
+  }
 
   constructor(items = [] as Array<Item>) {
     this.items = items;
@@ -22,7 +31,7 @@ export class GildedRose {
 
   updateQuality = () => 
     this.items.forEach(i => {
-      const strategy = degradationStrategies[i.name] || degradationStrategies[GoodsTypes.default];
+      const strategy = GildedRose.strategies[i.name] || GildedRose.strategies[GoodsTypes.default];
       strategy.updateItem(i);
   })
 }

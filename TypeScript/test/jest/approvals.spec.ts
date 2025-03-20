@@ -38,8 +38,9 @@ describe('Gilded Rose Approval', () => {
   });
 
   it('should foo', () => {
-    const gildedRose = new GildedRose([new Item('foo', 0, 0)]);
-    const items = gildedRose.updateQuality();
+    const items = [new Item('foo', 0, 0)]
+    const gildedRose = new GildedRose(items);
+    gildedRose.updateQuality();
   
     expect(items).toMatchSnapshot();
   });
